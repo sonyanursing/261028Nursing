@@ -1,0 +1,118 @@
+rules_version = '2';
+
+// 이 파일이 하는 일: 누가 어떤 데이터를 읽고 쓸 수 있는지 정하는 "진짜 보안" 규칙입니다.
+// Firebase 콘솔 → Firestore Database → 규칙 탭에 이 내용을 그대로 붙여 넣고 [게시]를 누르세요.
+// ※ 관리자 이메일을 바꾸려면 아래 'professor@example.com' 을 고치고, Netlify의 VITE_ADMIN_EMAIL 도 똑같이 바꾸세요.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- 공통 함수 ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'professor@example.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function userDoc() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    // 관리자이거나, users 문서의 role 이 'member' 인 사람
+    function isMember() {
+      return isAdmin()
+        || (signedIn() && exists(userDoc()) && get(userDoc()).data.role == 'member');
+    }
+
+    function isShortString(value, maxLen) {
+      return value is string && value.size() <= maxLen;
+    }
+
+    // ---------- 회원 ----------
+    match /users/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+
+      // 처음 로그인한 본인만, 반드시 '승인 대기' 상태로 만들 수 있음
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['displayName', 'email', 'photoURL', 'role', 'createdAt'])
+        && request.resource.data.role == 'pending'
+        && request.resource.data.email == request.auth.token.email
+        && isShortString(request.resource.data.displayName, 200)
+        && isShortString(request.resource.data.photoURL, 2000)
+        && request.resource.data.createdAt == request.time;
+
+      // 관리자: 역할을 pending/member 로만 변경 가능
+      // 본인: 이름·사진만 변경 가능 (역할은 절대 스스로 못 바꿈)
+      allow update: if (isAdmin() && request.resource.data.role in ['pending', 'member'])
+        || (signedIn() && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL']));
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- 자료 ----------
+    function validPost(data) {
+      return data.keys().hasOnly(['type', 'title', 'summary', 'body', 'tags', 'links',
+                                  'authorUid', 'createdAt', 'updatedAt'])
+        && data.type in ['research', 'course']
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && isShortString(data.summary, 500)
+        && isShortString(data.body, 100000)
+        && data.tags is list && data.tags.size() <= 30
+        && data.links is list && data.links.size() <= 30
+        && data.updatedAt == request.time;
+    }
+
+    match /posts/{postId} {
+      allow read: if isMember();
+
+      allow create: if isAdmin()
+        && validPost(request.resource.data)
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+
+      allow update: if isAdmin()
+        && validPost(request.resource.data)
+        && request.resource.data.authorUid == resource.data.authorUid
+        && request.resource.data.createdAt == resource.data.createdAt;
+
+      allow delete: if isAdmin();
+
+      // ---------- 댓글 ----------
+      match /comments/{commentId} {
+        allow read: if isMember();
+
+        allow create: if isMember()
+          && exists(/databases/$(database)/documents/posts/$(postId))
+          && request.resource.data.keys().hasOnly(['body', 'authorUid', 'authorName', 'authorPhotoURL',
+                                                   'createdAt', 'updatedAt'])
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 3000
+          && isShortString(request.resource.data.authorName, 200)
+          && isShortString(request.resource.data.authorPhotoURL, 2000)
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.updatedAt == request.time;
+
+        // 본인 댓글의 본문(body)과 수정 시각(updatedAt)만 바꿀 수 있음
+        allow update: if isMember()
+          && resource.data.authorUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['body', 'updatedAt'])
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 3000
+          && request.resource.data.updatedAt == request.time;
+
+        // 관리자는 모든 댓글, 회원은 본인 댓글만 삭제
+        allow delete: if isAdmin()
+          || (isMember() && resource.data.authorUid == request.auth.uid);
+      }
+    }
+  }
+}

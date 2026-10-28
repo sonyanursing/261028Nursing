@@ -1,0 +1,7 @@
+# Netlify 배포 설정 파일입니다. (빌드 명령과 배포 폴더, Node 버전을 지정)
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

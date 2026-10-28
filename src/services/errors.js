@@ -15,6 +15,17 @@ const messages = {
   "auth/unauthorized-domain":
     "이 주소는 Firebase의 '승인된 도메인'에 등록되어 있지 않습니다. README의 안내를 확인해 주세요.",
   "auth/network-request-failed": "네트워크 오류입니다. 인터넷 연결을 확인해 주세요.",
+  // 아래는 대부분 설정 문제입니다. (Netlify 환경변수 또는 Firebase 콘솔 설정 확인)
+  "auth/invalid-api-key":
+    "Firebase API 키가 올바르지 않습니다. Netlify 환경변수 VITE_FIREBASE_API_KEY 값을 확인해 주세요.",
+  "auth/api-key-not-valid.-please-pass-a-valid-api-key.":
+    "Firebase API 키가 올바르지 않습니다. Netlify 환경변수 VITE_FIREBASE_API_KEY 값을 확인해 주세요.",
+  "auth/operation-not-allowed":
+    "Firebase에서 Google 로그인이 사용 설정되어 있지 않습니다. Authentication → 로그인 방법을 확인해 주세요.",
+  "auth/configuration-not-found":
+    "Firebase Authentication 설정을 찾을 수 없습니다. Authentication에서 [시작하기]를 눌렀는지 확인해 주세요.",
+  "auth/invalid-app-id":
+    "Firebase 앱 ID가 올바르지 않습니다. Netlify 환경변수 VITE_FIREBASE_APP_ID 값을 확인해 주세요.",
 };
 
 export function toKoreanError(error) {
@@ -23,7 +34,8 @@ export function toKoreanError(error) {
   const code = (error && error.code) || "";
   // Firestore 오류 코드는 "firestore/permission-denied" 형태일 때도 있어 앞부분을 떼어 냅니다.
   const shortCode = code.startsWith("firestore/") ? code.slice("firestore/".length) : code;
-  return (
-    messages[shortCode] || messages[code] || "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
-  );
+  if (messages[shortCode]) return messages[shortCode];
+  // 모르는 오류는 원인을 찾을 수 있도록 오류 코드를 함께 보여 줍니다.
+  const detail = code ? ` (오류 코드: ${code})` : "";
+  return `알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.${detail}`;
 }

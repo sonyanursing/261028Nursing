@@ -2,7 +2,7 @@ rules_version = '2';
 
 // 이 파일이 하는 일: 누가 어떤 데이터를 읽고 쓸 수 있는지 정하는 "진짜 보안" 규칙입니다.
 // Firebase 콘솔 → Firestore Database → 규칙 탭에 이 내용을 그대로 붙여 넣고 [게시]를 누르세요.
-// ※ 관리자 이메일을 바꾸려면 아래 'professor@example.com' 을 고치고, Netlify의 VITE_ADMIN_EMAIL 도 똑같이 바꾸세요.
+// ※ 관리자 이메일을 바꾸려면 아래 isAdmin() 안의 이메일을 고치고, Netlify의 VITE_ADMIN_EMAIL 도 똑같이 바꾸세요.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -14,7 +14,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return signedIn()
-        && request.auth.token.email == 'professor@example.com'
+        && request.auth.token.email == 'sy.shon@kmu.kr'
         && request.auth.token.email_verified == true;
     }
 

@@ -30,7 +30,7 @@
 | 브라우저 탭에 보이는 제목 | `index.html`의 `<title>…</title>` |
 | 색상 | `src/styles/global.css` 맨 위 `:root { … }` |
 | 글꼴 | `index.html`의 글꼴 링크(Pretendard, Noto Serif KR)와 `global.css`의 `--font-sans`, `--font-serif` |
-| 관리자 이메일 | `firestore.rules`의 `professor@example.com` **그리고** Netlify 환경변수 `VITE_ADMIN_EMAIL` (두 곳 모두) |
+| 관리자 이메일 (현재 `sy.shon@kmu.kr`) | `firestore.rules`의 `isAdmin()` 안 이메일 **그리고** Netlify 환경변수 `VITE_ADMIN_EMAIL` (두 곳 모두) |
 
 > 💡 **GitHub 웹사이트에서 바로 고칠 수 있습니다.** 저장소에서 파일을 클릭 → 오른쪽 위 연필(✏️) 아이콘 →
 > 따옴표 안의 글자만 수정 → 초록색 **Commit changes…** → **Commit changes** 클릭.
@@ -147,7 +147,7 @@ Netlify가 알아보기 쉽도록 기본 브랜치 이름을 `main`으로 바꾸
 1. Firestore Database 화면 위쪽의 **규칙(Rules)** 탭 클릭.
 2. 편집창의 기존 내용을 모두 지웁니다(`Ctrl + A` → `Delete`).
 3. 이 저장소의 `firestore.rules` 파일을 열어(GitHub에서 파일 클릭 → 오른쪽 위 **복사** 아이콘) 내용 전체를 붙여 넣습니다.
-4. **관리자 이메일을 실제 이메일로 바꿉니다**: 붙여 넣은 내용에서 `professor@example.com`을 교수님 Google 계정 이메일로 수정.
+4. **관리자 이메일 확인**: 붙여 넣은 내용의 `isAdmin()` 안 이메일(현재 `sy.shon@kmu.kr`)이 교수님 Google 로그인 이메일과 같은지 확인합니다. 다르면 고칩니다.
    (GitHub의 `firestore.rules` 파일도 같은 이메일로 고쳐 두면 나중에 헷갈리지 않습니다.)
 5. **게시(Publish)** 클릭.
 

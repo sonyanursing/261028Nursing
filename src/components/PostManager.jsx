@@ -42,8 +42,8 @@ export default function PostManager() {
   }
 
   return (
-    <section className="section" aria-labelledby="posts-title">
-      <div className="form-row">
+    <section className="admin-panel" aria-labelledby="posts-title">
+      <div className="panel-head">
         <h2 id="posts-title">자료 관리</h2>
         {!editing && (
           <button type="button" className="btn btn-primary" onClick={() => setEditing("new")}>
@@ -65,15 +65,19 @@ export default function PostManager() {
       {loading ? (
         <Loading />
       ) : posts.length === 0 ? (
-        <p className="muted">아직 등록된 자료가 없습니다.</p>
+        <p className="empty-state">아직 등록된 자료가 없습니다.</p>
       ) : (
         <ul className="user-list">
           {posts.map((post) => (
             <li key={post.id} className="user-row">
-              <div>
-                <span className="role-badge">{typeLabels[post.type]}</span>{" "}
-                <Link to={`/posts/${post.id}`}>{post.title}</Link>
-                <div className="muted small">작성일 {formatDate(post.createdAt)}</div>
+              <div className="row-main">
+                <span className={`type-chip type-${post.type}`}>{typeLabels[post.type]}</span>
+                <div>
+                  <Link to={`/posts/${post.id}`} className="row-title">
+                    {post.title}
+                  </Link>
+                  <div className="muted small">작성일 {formatDate(post.createdAt)}</div>
+                </div>
               </div>
               <div className="button-row">
                 <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditing(post)}>

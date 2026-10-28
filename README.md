@@ -26,9 +26,10 @@
 
 | 바꾸고 싶은 것 | 고칠 파일 |
 |---|---|
-| 연구실 이름, 연구 분야, 교수 소개, 연락처, 푸터 윤리 문구 | `src/config/site.js` |
+| 연구실 이름(한글·영문), 연구 분야, 교수 소개·사진, 연락처, 푸터 윤리 문구 | `src/config/site.js` |
 | 브라우저 탭에 보이는 제목 | `index.html`의 `<title>…</title>` |
 | 색상 | `src/styles/global.css` 맨 위 `:root { … }` |
+| 글꼴 | `index.html`의 글꼴 링크(Pretendard, Noto Serif KR)와 `global.css`의 `--font-sans`, `--font-serif` |
 | 관리자 이메일 | `firestore.rules`의 `professor@example.com` **그리고** Netlify 환경변수 `VITE_ADMIN_EMAIL` (두 곳 모두) |
 
 > 💡 **GitHub 웹사이트에서 바로 고칠 수 있습니다.** 저장소에서 파일을 클릭 → 오른쪽 위 연필(✏️) 아이콘 →

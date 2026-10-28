@@ -36,12 +36,14 @@ export default function CommentSection({ postId }) {
 
   return (
     <section className="section comments" aria-labelledby="comments-title">
-      <h2 id="comments-title">토론 ({comments.length})</h2>
+      <h2 id="comments-title">
+        토론 <span className="count-badge">{comments.length}</span>
+      </h2>
       <ErrorMessage message={loadError || error} />
       {loading ? (
         <Loading text="댓글을 불러오는 중…" />
       ) : comments.length === 0 ? (
-        <p className="muted">첫 의견을 남겨 주세요.</p>
+        <p className="empty-state">아직 의견이 없습니다. 첫 의견을 남겨 주세요.</p>
       ) : (
         <ul className="comment-list">
           {comments.map((comment) => {
@@ -59,7 +61,7 @@ export default function CommentSection({ postId }) {
           })}
         </ul>
       )}
-      <CommentForm label="댓글 쓰기" submitLabel="댓글 등록" onSubmit={handleAdd} />
+      <CommentForm label="의견 남기기" submitLabel="댓글 등록" onSubmit={handleAdd} />
     </section>
   );
 }

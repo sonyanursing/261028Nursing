@@ -2,6 +2,7 @@
 export function Loading({ text = "불러오는 중…" }) {
   return (
     <p className="loading" role="status">
+      <span className="spinner" aria-hidden="true" />
       {text}
     </p>
   );

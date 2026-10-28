@@ -3,6 +3,8 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx";
 import { isFirebaseConfigured } from "../lib/firebase.js";
 import ConfigNotice from "../components/ConfigNotice.jsx";
+import Panel from "../components/Panel.jsx";
+import { Google, Lock } from "../components/Icons.jsx";
 import { ErrorMessage, Loading } from "../components/Status.jsx";
 
 export default function Login() {
@@ -21,14 +23,13 @@ export default function Login() {
   }
 
   return (
-    <section className="narrow">
-      <h1>로그인</h1>
-      <p>연구실 구성원은 학교 또는 개인 Google 계정으로 로그인해 주세요.</p>
-      <p className="muted small">처음 로그인하면 교수님의 승인 후 자료를 볼 수 있습니다.</p>
+    <Panel icon={<Lock />} title="연구실 구성원 로그인">
+      <p className="panel-lead">연구·수업 자료와 토론은 승인된 구성원만 이용할 수 있습니다.</p>
       <ErrorMessage message={error} />
-      <button type="button" className="btn btn-primary btn-lg" onClick={signIn}>
-        Google로 로그인
+      <button type="button" className="btn btn-google btn-lg" onClick={signIn}>
+        <Google /> Google로 로그인
       </button>
-    </section>
+      <p className="muted small">처음 로그인하면 교수님의 승인 후 자료를 볼 수 있습니다.</p>
+    </Panel>
   );
 }

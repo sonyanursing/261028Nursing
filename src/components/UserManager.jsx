@@ -36,9 +36,18 @@ export default function UserManager() {
     const busy = busyId === u.id;
     return (
       <li key={u.id} className="user-row">
-        <div>
-          <strong>{u.displayName || "(이름 없음)"}</strong> <span className="muted">{u.email}</span>
-          <div className="muted small">가입 신청일 {formatDate(u.createdAt)}</div>
+        <div className="row-main">
+          {u.photoURL ? (
+            <img className="avatar" src={u.photoURL} alt="" referrerPolicy="no-referrer" />
+          ) : (
+            <span className="avatar avatar-initial" aria-hidden="true">
+              {(u.displayName || u.email || "?").slice(0, 1)}
+            </span>
+          )}
+          <div>
+            <strong>{u.displayName || "(이름 없음)"}</strong> <span className="muted small">{u.email}</span>
+            <div className="muted small">가입 신청일 {formatDate(u.createdAt)}</div>
+          </div>
         </div>
         <div className="button-row">
           {isPending && (
@@ -65,22 +74,26 @@ export default function UserManager() {
   }
 
   return (
-    <section className="section" aria-labelledby="users-title">
+    <section className="admin-panel" aria-labelledby="users-title">
       <h2 id="users-title">회원 관리</h2>
       <ErrorMessage message={loadError || error} />
       {loading ? (
         <Loading />
       ) : (
         <>
-          <h3>승인 대기 ({pending.length})</h3>
+          <h3 className="subhead">
+            승인 대기 <span className="count-badge count-alert">{pending.length}</span>
+          </h3>
           {pending.length === 0 ? (
-            <p className="muted">승인 대기 중인 사람이 없습니다.</p>
+            <p className="empty-state">승인 대기 중인 사람이 없습니다.</p>
           ) : (
             <ul className="user-list">{pending.map((u) => renderRow(u, true))}</ul>
           )}
-          <h3>회원 ({members.length})</h3>
+          <h3 className="subhead">
+            회원 <span className="count-badge">{members.length}</span>
+          </h3>
           {members.length === 0 ? (
-            <p className="muted">아직 승인된 회원이 없습니다.</p>
+            <p className="empty-state">아직 승인된 회원이 없습니다.</p>
           ) : (
             <ul className="user-list">{members.map((u) => renderRow(u, false))}</ul>
           )}

@@ -5,6 +5,7 @@ import { useLoader } from "../lib/useLoader.js";
 import { formatDate, isSafeUrl, typeLabels } from "../lib/format.js";
 import { TagList } from "../components/PostCard.jsx";
 import CommentSection from "../components/CommentSection.jsx";
+import { ArrowLeft, ExternalLink } from "../components/Icons.jsx";
 import { ErrorMessage, Loading } from "../components/Status.jsx";
 
 export default function PostDetail() {
@@ -20,32 +21,38 @@ export default function PostDetail() {
 
   return (
     <article className="post-detail">
-      <p>
-        <Link to={backTo}>← {typeLabels[post.type]} 목록</Link>
-      </p>
-      <h1>{post.title}</h1>
-      <p className="muted small">
-        작성일 {formatDate(post.createdAt)}
-        {post.updatedAt &&
-          formatDate(post.updatedAt) !== formatDate(post.createdAt) &&
-          ` · 수정일 ${formatDate(post.updatedAt)}`}
-      </p>
-      <TagList tags={post.tags} />
-      {post.summary && <p className="lead">{post.summary}</p>}
+      <Link to={backTo} className="back-link">
+        <ArrowLeft /> {typeLabels[post.type]} 목록
+      </Link>
+
+      <header className="post-header">
+        <span className={`type-chip type-${post.type}`}>{typeLabels[post.type]}</span>
+        <h1>{post.title}</h1>
+        {post.summary && <p className="post-summary">{post.summary}</p>}
+        <div className="post-meta">
+          <span>작성일 {formatDate(post.createdAt)}</span>
+          {post.updatedAt && formatDate(post.updatedAt) !== formatDate(post.createdAt) && (
+            <span>수정일 {formatDate(post.updatedAt)}</span>
+          )}
+        </div>
+        <TagList tags={post.tags} />
+      </header>
 
       {/* 본문은 일반 텍스트로만 표시하고, 줄바꿈은 CSS(white-space: pre-wrap)로 유지합니다. */}
-      <div className="post-body">{post.body}</div>
+      {post.body && <div className="post-body">{post.body}</div>}
 
       {links.length > 0 && (
-        <section className="section" aria-labelledby="links-title">
-          <h2 id="links-title">첨부 링크</h2>
-          <ul className="link-list">
+        <section className="post-links" aria-labelledby="links-title">
+          <h2 id="links-title">첨부 자료</h2>
+          <ul className="link-grid">
             {links.map((link, i) => (
               <li key={i}>
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
-                  {link.label || link.url}
+                <a href={link.url} target="_blank" rel="noopener noreferrer" className="link-card">
+                  <span className="link-card-label">{link.label || "첨부 링크"}</span>
+                  <span className="link-card-url">{new URL(link.url).hostname}</span>
+                  <ExternalLink />
+                  <span className="visually-hidden"> (새 창에서 열림)</span>
                 </a>
-                <span className="visually-hidden"> (새 창에서 열림)</span>
               </li>
             ))}
           </ul>

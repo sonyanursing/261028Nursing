@@ -23,7 +23,9 @@ export default function CommentItem({ comment, canEdit, canDelete, onUpdate, onD
         {comment.authorPhotoURL ? (
           <img className="avatar" src={comment.authorPhotoURL} alt="" referrerPolicy="no-referrer" />
         ) : (
-          <span className="avatar avatar-empty" aria-hidden="true" />
+          <span className="avatar avatar-initial" aria-hidden="true">
+            {(comment.authorName || "?").slice(0, 1)}
+          </span>
         )}
         <strong>{comment.authorName}</strong>
         <span className="muted small">

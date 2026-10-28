@@ -3,13 +3,13 @@
 
 const site = {
   // 연구실 이름 (헤더와 홈 화면 제목에 표시)
-  labName: "○○대학교 간호학 연구실",
+  labName: "XIPES Lab",
 
   // 영문 이름 (헤더와 홈 화면 상단에 작게 표시)
   labNameEn: "Nursing Science Laboratory",
 
   // 홈 화면 제목 아래 한 줄 소개
-  tagline: "근거 기반 간호와 환자 중심 돌봄을 연구합니다.",
+  tagline: "간호교육과 아동건강을 연구합니다.",
 
   // 연구 분야 (항목을 추가·삭제할 수 있습니다)
   researchAreas: [

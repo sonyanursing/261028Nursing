@@ -42,6 +42,7 @@
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
     "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
   --font-serif: "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --font-brand: "Sora", var(--font-sans); /* 연구실 이름 전용 */
 }
 
 /* ---------- 기본 ---------- */
@@ -218,9 +219,10 @@ address {
   min-width: 0;
 }
 .brand-name {
-  font-family: var(--font-serif);
+  font-family: var(--font-brand);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -653,8 +655,12 @@ address {
   position: relative;
 }
 .hero h1 {
+  font-family: var(--font-brand);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
   color: #fff;
-  font-size: clamp(2rem, 1.4rem + 2.8vw, 3.4rem);
+  font-size: clamp(2.4rem, 1.6rem + 3.6vw, 4.4rem);
   max-width: 16em;
   margin-bottom: 18px;
 }
@@ -1259,7 +1265,8 @@ textarea {
   gap: 14px;
 }
 .footer-name {
-  font-family: var(--font-serif);
+  font-family: var(--font-brand);
+  letter-spacing: -0.02em;
   font-size: 1.05rem;
   font-weight: 700;
   color: #fff;

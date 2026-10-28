@@ -39,9 +39,9 @@ const site = {
 
   // 연락처
   contact: {
-    email: "professor@example.com",
-    office: "○○관 000호",
-    phone: "000-000-0000",
+    email: "sy.shon@kmu.ac.kr",
+    office: "전갑규관 521호",
+    phone: "053-258-7657",
   },
 
   // 푸터에 표시되는 연구윤리 안내 문구 (1줄)

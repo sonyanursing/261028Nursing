@@ -17,7 +17,7 @@ const site = {
   // 연구 분야 (항목을 추가·삭제할 수 있습니다)
   researchAreas: [
     {
-      title: "전문직간교육 (Interprofessional Education, IPE)",
+      title: "IPE (Interprofessional Education)",
       description:
         "간호학과 의학 등 여러 보건의료 전공 학생이 함께 배우는 전문직간교육 프로그램을 개발하고, 협력 실무 준비도와 태도에 미치는 효과를 검증합니다.",
     },

@@ -227,6 +227,8 @@ address {
 }
 .brand-sub {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1345,6 +1347,9 @@ textarea {
   .brand-mark svg {
     width: 32px;
     height: 32px;
+  }
+  .brand-sub {
+    display: none;
   }
   .hero {
     padding: 72px 0 64px;

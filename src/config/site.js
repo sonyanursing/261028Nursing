@@ -3,10 +3,10 @@
 
 const site = {
   // 연구실 이름 (헤더와 홈 화면 제목에 표시)
-  labName: "XIPES Lab",
+  labName: "InXIPES Lab",
 
-  // 영문 이름 (헤더와 홈 화면 상단에 작게 표시)
-  labNameEn: "Nursing Science Laboratory",
+  // 연구실 이름의 풀이 (헤더와 홈 화면 상단에 작게 표시)
+  labNameEn: "In situ XR Interprofessional Education Simulation",
 
   // 홈 화면 제목 아래 한 줄 소개
   tagline: "간호교육과 아동건강을 연구합니다.",

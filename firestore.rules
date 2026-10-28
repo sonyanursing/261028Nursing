@@ -55,6 +55,29 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---------- 댓글 공통 검사 (자료 토론·질문 답변) ----------
+    function validNewComment(data) {
+      return data.keys().hasOnly(['body', 'authorUid', 'authorName', 'authorPhotoURL', 'createdAt', 'updatedAt'])
+        && data.authorUid == request.auth.uid
+        && data.body is string
+        && data.body.size() > 0
+        && data.body.size() <= 3000
+        && isShortString(data.authorName, 200)
+        && isShortString(data.authorPhotoURL, 2000)
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    // 본인 댓글의 본문(body)과 수정 시각(updatedAt)만 바꿀 수 있음
+    function validCommentEdit() {
+      return resource.data.authorUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['body', 'updatedAt'])
+        && request.resource.data.body is string
+        && request.resource.data.body.size() > 0
+        && request.resource.data.body.size() <= 3000
+        && request.resource.data.updatedAt == request.time;
+    }
+
     // ---------- 자료 ----------
     function validPost(data) {
       return data.keys().hasOnly(['type', 'title', 'summary', 'body', 'tags', 'links',
@@ -89,29 +112,78 @@ service cloud.firestore {
 
         allow create: if isMember()
           && exists(/databases/$(database)/documents/posts/$(postId))
-          && request.resource.data.keys().hasOnly(['body', 'authorUid', 'authorName', 'authorPhotoURL',
-                                                   'createdAt', 'updatedAt'])
-          && request.resource.data.authorUid == request.auth.uid
-          && request.resource.data.body is string
-          && request.resource.data.body.size() > 0
-          && request.resource.data.body.size() <= 3000
-          && isShortString(request.resource.data.authorName, 200)
-          && isShortString(request.resource.data.authorPhotoURL, 2000)
-          && request.resource.data.createdAt == request.time
-          && request.resource.data.updatedAt == request.time;
+          && validNewComment(request.resource.data);
 
-        // 본인 댓글의 본문(body)과 수정 시각(updatedAt)만 바꿀 수 있음
-        allow update: if isMember()
-          && resource.data.authorUid == request.auth.uid
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['body', 'updatedAt'])
-          && request.resource.data.body is string
-          && request.resource.data.body.size() > 0
-          && request.resource.data.body.size() <= 3000
-          && request.resource.data.updatedAt == request.time;
+        allow update: if isMember() && validCommentEdit();
 
         // 관리자는 모든 댓글, 회원은 본인 댓글만 삭제
         allow delete: if isAdmin()
           || (isMember() && resource.data.authorUid == request.auth.uid);
+      }
+    }
+
+    // ---------- 질문 게시판 ----------
+    function questionDoc(questionId) {
+      return /databases/$(database)/documents/questions/$(questionId);
+    }
+
+    match /questions/{questionId} {
+      allow read: if isMember();
+
+      // 회원 누구나 본인 이름으로 질문 작성 (처음엔 '해결 안 됨')
+      allow create: if isMember()
+        && request.resource.data.keys().hasOnly(['title', 'body', 'resolved', 'authorUid', 'authorName',
+                                                 'authorPhotoURL', 'createdAt', 'updatedAt'])
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.body is string
+        && request.resource.data.body.size() > 0
+        && request.resource.data.body.size() <= 10000
+        && request.resource.data.resolved == false
+        && isShortString(request.resource.data.authorName, 200)
+        && isShortString(request.resource.data.authorPhotoURL, 2000)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // 작성자: 제목·내용 수정과 해결 표시 / 관리자: 해결 표시만
+      allow update: if isMember()
+        && request.resource.data.resolved is bool
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.body is string
+        && request.resource.data.body.size() > 0
+        && request.resource.data.body.size() <= 10000
+        && (
+          (resource.data.authorUid == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['title', 'body', 'resolved', 'updatedAt'])
+            && (!('updatedAt' in request.resource.data.diff(resource.data).affectedKeys())
+                || request.resource.data.updatedAt == request.time))
+          || (isAdmin()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resolved']))
+        );
+
+      // 작성자 본인 또는 관리자만 삭제
+      allow delete: if isAdmin()
+        || (isMember() && resource.data.authorUid == request.auth.uid);
+
+      // ---------- 질문의 답변 ----------
+      match /comments/{commentId} {
+        allow read: if isMember();
+
+        allow create: if isMember()
+          && exists(questionDoc(questionId))
+          && validNewComment(request.resource.data);
+
+        allow update: if isMember() && validCommentEdit();
+
+        // 관리자, 답변 작성자 본인, 그리고 질문 작성자(질문을 지울 때 답변도 함께 지우기 위해)
+        allow delete: if isAdmin()
+          || (isMember() && resource.data.authorUid == request.auth.uid)
+          || (isMember() && get(questionDoc(questionId)).data.authorUid == request.auth.uid);
       }
     }
   }

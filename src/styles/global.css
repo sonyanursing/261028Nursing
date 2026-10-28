@@ -226,6 +226,7 @@ address {
   text-overflow: ellipsis;
 }
 .brand-sub {
+  white-space: nowrap;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -252,6 +253,7 @@ address {
   color: var(--ink-soft);
   font-weight: 500;
   text-decoration: none;
+  white-space: nowrap;
   transition:
     color 0.15s,
     background 0.15s;
@@ -333,6 +335,7 @@ address {
 }
 .role-badge {
   display: inline-block;
+  white-space: nowrap;
   font-size: 0.72rem;
   padding: 1px 8px;
   border-radius: 999px;
@@ -1285,7 +1288,7 @@ textarea {
 }
 
 /* ---------- 태블릿·휴대폰 ---------- */
-@media (max-width: 860px) {
+@media (max-width: 1080px) {
   .menu-toggle {
     display: inline-flex;
   }
@@ -1386,4 +1389,62 @@ textarea {
   .footer-contact {
     text-align: left;
   }
+}
+
+/* ---------- 질문 게시판 ---------- */
+.filter-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.filter-tab {
+  padding: 6px 16px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.filter-tab:hover {
+  color: var(--navy-800);
+}
+.filter-tab.is-active {
+  background: var(--navy-800);
+  color: #fff;
+}
+.question-row {
+  position: relative;
+}
+.question-row:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+.status-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-open {
+  background: var(--gold-100);
+  color: #7a5517;
+}
+.status-resolved {
+  background: var(--teal-100);
+  color: var(--teal-600);
+}
+.post-header .status-chip {
+  margin-bottom: 14px;
+}
+.post-header .button-row {
+  margin-top: 4px;
 }

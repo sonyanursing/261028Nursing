@@ -25,6 +25,7 @@ export default function Header() {
     { to: "/", label: "홈", end: true },
     { to: "/research", label: "연구 자료" },
     { to: "/courses", label: "수업 자료" },
+    { to: "/questions", label: "질문 게시판" },
   ];
   if (isAdmin) links.push({ to: "/admin", label: "관리자" });
 

@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import PostList from "./pages/PostList.jsx";
 import PostDetail from "./pages/PostDetail.jsx";
+import QuestionList from "./pages/QuestionList.jsx";
+import QuestionDetail from "./pages/QuestionDetail.jsx";
 import Login from "./pages/Login.jsx";
 import Pending from "./pages/Pending.jsx";
 import Admin from "./pages/Admin.jsx";
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="research" element={<PostList type="research" />} />
           <Route path="courses" element={<PostList type="course" />} />
           <Route path="posts/:id" element={<PostDetail />} />
+          <Route path="questions" element={<QuestionList />} />
+          <Route path="questions/:id" element={<QuestionDetail />} />
         </Route>
 
         {/* 관리자(교수)만 볼 수 있는 화면 */}

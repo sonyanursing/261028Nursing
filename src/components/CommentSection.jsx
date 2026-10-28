@@ -1,4 +1,5 @@
-// 이 파일이 하는 일: 자료 상세 화면 아래의 토론(댓글) 영역입니다. 목록 보기·작성·수정·삭제를 담당합니다.
+// 이 파일이 하는 일: 자료 상세·질문 상세 화면 아래의 댓글 영역입니다. 목록 보기·작성·수정·삭제를 담당합니다.
+// parent="posts"(자료 토론) 또는 "questions"(질문 답변), title 은 영역 제목입니다.
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext.jsx";
 import { addComment, deleteComment, listComments, updateComment } from "../services/comments.js";
@@ -8,9 +9,21 @@ import CommentForm from "./CommentForm.jsx";
 import CommentItem from "./CommentItem.jsx";
 import { ErrorMessage, Loading } from "./Status.jsx";
 
-export default function CommentSection({ postId }) {
+export default function CommentSection({
+  parent = "posts",
+  parentId,
+  title = "토론",
+  placeholderLabel = "의견 남기기",
+  submitLabel = "댓글 등록",
+  canDeleteAll = false, // 관리자 외에 모든 댓글을 지울 수 있는 사람인지 (예: 질문 작성자)
+}) {
   const { user, isAdmin } = useAuth();
-  const { data, loading, error: loadError, reload } = useLoader(() => listComments(postId), [postId]);
+  const {
+    data,
+    loading,
+    error: loadError,
+    reload,
+  } = useLoader(() => listComments(parent, parentId), [parent, parentId]);
   const comments = data || [];
   const [error, setError] = useState("");
 
@@ -27,17 +40,17 @@ export default function CommentSection({ postId }) {
     }
   }
 
-  const handleAdd = (body) => run(() => addComment(postId, body, user));
-  const handleUpdate = (commentId, body) => run(() => updateComment(postId, commentId, body));
+  const handleAdd = (body) => run(() => addComment(parent, parentId, body, user));
+  const handleUpdate = (commentId, body) => run(() => updateComment(parent, parentId, commentId, body));
   const handleDelete = (commentId) => {
     if (!window.confirm("이 댓글을 삭제할까요?")) return;
-    run(() => deleteComment(postId, commentId));
+    run(() => deleteComment(parent, parentId, commentId));
   };
 
   return (
     <section className="section comments" aria-labelledby="comments-title">
       <h2 id="comments-title">
-        토론 <span className="count-badge">{comments.length}</span>
+        {title} <span className="count-badge">{comments.length}</span>
       </h2>
       <ErrorMessage message={loadError || error} />
       {loading ? (
@@ -53,7 +66,7 @@ export default function CommentSection({ postId }) {
                 key={comment.id}
                 comment={comment}
                 canEdit={isMine}
-                canDelete={isMine || isAdmin}
+                canDelete={isMine || isAdmin || canDeleteAll}
                 onUpdate={handleUpdate}
                 onDelete={handleDelete}
               />
@@ -61,7 +74,7 @@ export default function CommentSection({ postId }) {
           })}
         </ul>
       )}
-      <CommentForm label="의견 남기기" submitLabel="댓글 등록" onSubmit={handleAdd} />
+      <CommentForm label={placeholderLabel} submitLabel={submitLabel} onSubmit={handleAdd} />
     </section>
   );
 }

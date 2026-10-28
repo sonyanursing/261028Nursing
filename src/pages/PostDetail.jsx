@@ -59,7 +59,7 @@ export default function PostDetail() {
         </section>
       )}
 
-      <CommentSection postId={post.id} />
+      <CommentSection parent="posts" parentId={post.id} />
     </article>
   );
 }

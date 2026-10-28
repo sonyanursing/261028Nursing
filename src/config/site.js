@@ -5,7 +5,10 @@ const site = {
   // 연구실 이름 (헤더와 홈 화면 제목에 표시)
   labName: "InXIPES Lab",
 
-  // 연구실 이름의 풀이 (헤더와 홈 화면 상단에 작게 표시)
+  // 헤더의 연구실 이름 아래에 작게 표시되는 문구
+  headerSubtitle: "Nursing Science Laboratory",
+
+  // 연구실 이름의 풀이 (홈 화면 상단과 푸터에 작게 표시)
   labNameEn: "In situ XR Interprofessional Education Simulation",
 
   // 홈 화면 제목 아래 한 줄 소개

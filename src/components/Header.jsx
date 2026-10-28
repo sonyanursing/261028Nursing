@@ -38,7 +38,7 @@ export default function Header() {
           </span>
           <span className="brand-text">
             <span className="brand-name">{site.labName}</span>
-            <span className="brand-sub">{site.labNameEn}</span>
+            <span className="brand-sub">{site.headerSubtitle}</span>
           </span>
         </Link>
 
